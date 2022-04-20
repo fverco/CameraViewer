@@ -3,10 +3,30 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
         xmlns:local="clr-namespace:CameraViewer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Camera Viewer" Height="450" Width="800">
+    <Grid Name="MainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
+        <DockPanel Grid.Row="0" Grid.Column="0">
+            <Menu>
+                <MenuItem Header="_File">
+                    <MenuItem Header="_Add New Camera" Click="OpenNewCameraWindow"/>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+        
+        <Viewbox Name="CameraViewBox" Grid.Column="0" Grid.Row="1" Stretch="Fill" StretchDirection="Both">
+            <StackPanel Name="CameraPanel">
+            </StackPanel>
+        </Viewbox>
     </Grid>
 </Window>
