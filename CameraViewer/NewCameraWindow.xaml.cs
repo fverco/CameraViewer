@@ -35,7 +35,9 @@ namespace CameraViewer
         /// <param name="e">The event arguments.</param>
         private void AddClicked(object sender, RoutedEventArgs e)
         {
-            var connString = $"rtsp://{NameTextBox.Text}:{PassBox.Password}@{IpTextBox.Text}:{PortTextBox.Text}{ParametersTextBox.Text}";
+            var connString = $"rtsp://{NameTextBox.Text}:{PassBox.Password}@{IpTextBox.Address}:{PortTextBox.Text}{ParametersTextBox.Text}";
+
+            MessageBox.Show(connString);
 
             var newCamera = new Camera(CamNameTextBox.Text, connString);
 
