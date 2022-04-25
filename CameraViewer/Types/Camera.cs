@@ -60,7 +60,7 @@ namespace CameraViewer.Types
         /// </summary>
         public void Play()
         {
-            VlcPlayer.Play(new Media(Globals.CameraLibVLC, ConnectionString, FromType.FromLocation));
+            VlcPlayer.Play(new Media(Globals.CameraLibVLC, Crypto.Unprotect(ConnectionString), FromType.FromLocation));
         }
 
         /// <summary>
