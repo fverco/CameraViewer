@@ -1,19 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using LibVLCSharp.Shared;
-using LibVLCSharp.WPF;
 using CameraViewer.Types;
 
 namespace CameraViewer
@@ -23,6 +10,8 @@ namespace CameraViewer
     /// </summary>
     public partial class MainWindow : Window
     {
+        List<Camera> _Cameras = new();
+
         /// <summary>
         /// Initialize the Main Window.
         /// </summary>
@@ -38,6 +27,16 @@ namespace CameraViewer
         void SetupCameras()
         {
             CameraPanel.Orientation = Orientation.Horizontal;
+
+            if (XmlHandler.CameraFileExists())
+            {
+                // Read the camera info from the XML file.
+                _Cameras = XmlHandler.ReadAllCamerasFromFile();
+
+                // Add the cameras to the UI.
+                foreach (var cam in _Cameras)
+                    AddCamera(cam);
+            }
         }
 
         /// <summary>
@@ -54,6 +53,25 @@ namespace CameraViewer
         }
 
         /// <summary>
+        /// Removes the cameras currently playing and reloads them from the camera file.
+        /// </summary>
+        internal void RefreshCameras()
+        {
+            // Removes all cameras from the UI.
+            CameraPanel.Children.Clear();
+
+            // Removes all cameras from memory.
+            _Cameras.Clear();
+
+            // Read the camera info from the XML file.
+            _Cameras = XmlHandler.ReadAllCamerasFromFile();
+
+            // Add the cameras to the UI.
+            foreach (var cam in _Cameras)
+                AddCamera(cam);
+        }
+
+        /// <summary>
         /// Opens the New Camera window for the user to add a new camera.
         /// </summary>
         /// <param name="sender">The object that sent the event signal.</param>
@@ -62,6 +80,16 @@ namespace CameraViewer
         {
             var newCamWindow = new NewCameraWindow();
             newCamWindow.Show();
+        }
+
+        /// <summary>
+        /// Triggered when the refresh button is clicked. This will refresh the cameras from the camera file.
+        /// </summary>
+        /// <param name="sender">The object that sent the event signal.</param>
+        /// <param name="e">The event arguments.</param>
+        private void RefreshButtonClicked(object sender, RoutedEventArgs e)
+        {
+            RefreshCameras();
         }
     }
 }

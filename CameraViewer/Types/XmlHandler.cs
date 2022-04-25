@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using System.IO;
 
 namespace CameraViewer.Types
 {
@@ -23,12 +24,13 @@ namespace CameraViewer.Types
         /// <summary>
         /// Write camera info to an XML file.
         /// <para>Note: An ArgumentException will be thrown if the camera already exists in the file.</para>
+        /// <para>Note: An XmlException will be thrown if the existing XML file is not formatted correctly.</para>
         /// </summary>
         /// <param name="cameraName">The camera's name.</param>
         /// <param name="connectionString">The connection string for the camera.</param>
         public static void WriteCameraToFile(string cameraName, string connectionString)
         {
-            if (!CameraExistsInFile(cameraName))
+            if (!CameraFileExists())
             {
                 var xmlDoc = new XmlDocument();
                 XmlNode rootNode = xmlDoc.CreateElement("cameras");
@@ -44,7 +46,30 @@ namespace CameraViewer.Types
                 xmlDoc.Save(_XmlCameraFileName);
             }
             else
-                throw new ArgumentException("Camera name already exists: " + cameraName);
+            {
+                if (!CameraExistsInFile(cameraName))
+                {
+                    var xmlDoc = new XmlDocument();
+                    xmlDoc.Load(_XmlCameraFileName);
+
+                    if (xmlDoc.DocumentElement.Name == "cameras")
+                    {
+                        XmlNode camNode = xmlDoc.CreateElement("camera");
+                        XmlAttribute attribute = xmlDoc.CreateAttribute("conn");
+                        attribute.Value = connectionString;
+                        camNode.Attributes.Append(attribute);
+                        camNode.InnerText = cameraName;
+                        xmlDoc.DocumentElement.AppendChild(camNode);
+
+                        xmlDoc.Save(_XmlCameraFileName);
+                    }
+                    else
+                        throw new XmlException("Root element is invalid.");
+                }
+                else
+                    throw new ArgumentException("Camera name \"" + cameraName + "\" already exists.");
+            }
+
         }
 
         /// <summary>
@@ -100,6 +125,7 @@ namespace CameraViewer.Types
 
         /// <summary>
         /// Checks if the provided camera name already exists in the file.
+        /// <para>Note: This method is not case sensitive.</para>
         /// </summary>
         /// <param name="cameraName">The name of the camera.</param>
         /// <returns>True or false.</returns>
@@ -107,14 +133,34 @@ namespace CameraViewer.Types
         {
             var xmlDoc = new XmlDocument();
             xmlDoc.Load(_XmlCameraFileName);
+            cameraName = cameraName.ToLower();
 
             foreach (XmlNode xmlNode in xmlDoc.DocumentElement)
             {
-                if (xmlNode.InnerText == cameraName)
+                if (xmlNode.InnerText.ToLower() == cameraName)
                     return true;
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Checks if the camera XML file exists.
+        /// </summary>
+        /// <returns>True of false.</returns>
+        public static bool CameraFileExists()
+        {
+            FileInfo xmlFileInfo = new(_XmlCameraFileName);
+            return xmlFileInfo.Exists;
+        }
+
+        /// <summary>
+        /// This deletes the camera file if it exists.
+        /// </summary>
+        public static void DeleteCameraFile()
+        {
+            FileInfo xmlFileInfo = new(_XmlCameraFileName);
+            xmlFileInfo.Delete();
         }
     }
 }

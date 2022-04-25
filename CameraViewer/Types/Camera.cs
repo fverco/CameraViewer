@@ -47,6 +47,17 @@ namespace CameraViewer.Types
         }
 
         /// <summary>
+        /// The Camera class desctructor.
+        /// <para>This will stop the stream if it is playing and dispose of all LibVLC objects.</para>
+        /// </summary>
+        ~Camera()
+        {
+            Stop();
+            VlcPlayer.Dispose();
+            VidView.Dispose();
+        }
+
+        /// <summary>
         /// Returns the view used to display the stream in the UI.
         /// </summary>
         /// <returns>A VideoView object.</returns>

@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using CameraViewer.Types;
+using System.Xml;
 
 namespace CameraViewer
 {
@@ -35,15 +25,35 @@ namespace CameraViewer
         /// <param name="e">The event arguments.</param>
         private void AddClicked(object sender, RoutedEventArgs e)
         {
-            var connString = $"rtsp://{NameTextBox.Text}:{PassBox.Password}@{IpTextBox.Address}:{PortTextBox.Text}{ParametersTextBox.Text}";
-
-            MessageBox.Show(connString);
-
+            var connString = Crypto.Protect($"rtsp://{NameTextBox.Text}:{PassBox.Password}@{IpTextBox.Address}:{PortTextBox.Text}{ParametersTextBox.Text}");
             var newCamera = new Camera(CamNameTextBox.Text, connString);
 
-            ((MainWindow)Application.Current.MainWindow).AddCamera(newCamera);
+            try
+            {
+                XmlHandler.WriteCameraToFile(newCamera.Name, newCamera.ConnectionString);
+                ((MainWindow)Application.Current.MainWindow).AddCamera(newCamera);
 
-            this.Close();
+                this.Close();
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message, "Duplicate entry", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (XmlException)
+            {
+                MessageBoxResult mbResult = MessageBox.Show("The camera file has corrupt data and cannot be written to.\nOverwrite it with new data? (Note: This will remove all your existing cameras.)", "Corrupt camera file", MessageBoxButton.YesNo, MessageBoxImage.Error);
+                
+                if (mbResult == MessageBoxResult.Yes)
+                {
+                    XmlHandler.DeleteCameraFile();
+                    XmlHandler.WriteCameraToFile(newCamera.Name, newCamera.ConnectionString);
+                    ((MainWindow)Application.Current.MainWindow).RefreshCameras();
+
+                    this.Close();
+                }
+                else if (mbResult == MessageBoxResult.No)
+                    MessageBox.Show("Cannot write to camera file.");
+            }
         }
 
         /// <summary>
