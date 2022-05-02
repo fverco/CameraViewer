@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using CameraViewer.Types;
+using LibVLCSharp.WPF;
 
 namespace CameraViewer
 {
@@ -10,7 +11,17 @@ namespace CameraViewer
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// A List of all the camera players and their connections.
+        /// <para>Note: The cameras in this list must have their Dispose() methods called when they are removed.</para>
+        /// </summary>
         List<Camera> _Cameras = new();
+
+        /// <summary>
+        /// A List of all the video views used to display the cameras.
+        /// <para>Note: The video views in this list must have their Dispose() methods called when they are removed.</para>
+        /// </summary>
+        List<VideoView> _VideoViews = new();
 
         /// <summary>
         /// Initialize the Main Window.
@@ -47,7 +58,20 @@ namespace CameraViewer
         {
             if (newCamera != null)
             {
-                CameraPanel.Children.Add(newCamera.VideoView());
+                // Create new video view.
+                var newVidView = new VideoView()
+                {
+                    MediaPlayer = newCamera.VlcPlayer,
+                    MinHeight = 200,
+                    MinWidth = 200
+                };
+
+                // Add to the video views list.
+                _VideoViews.Add(newVidView);
+
+                // Add to the UI.
+                CameraPanel.Children.Add(newVidView);
+
                 newCamera.Play();
             }
         }
@@ -57,10 +81,17 @@ namespace CameraViewer
         /// </summary>
         internal void RefreshCameras()
         {
-            // Removes all cameras from the UI.
+            // Remove all video views from the UI.
             CameraPanel.Children.Clear();
 
-            // Removes all cameras from memory.
+            // Dispose all the video views from memory.
+            foreach (VideoView vidview in _VideoViews)
+                vidview.Dispose();
+
+            // Remove all the video views from the list.
+            _VideoViews.Clear();
+
+            // Remove all cameras from memory.
             _Cameras.Clear();
 
             // Read the camera info from the XML file.

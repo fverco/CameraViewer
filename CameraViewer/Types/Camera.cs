@@ -1,5 +1,6 @@
 ﻿using LibVLCSharp.Shared;
 using LibVLCSharp.WPF;
+using System.Windows;
 
 namespace CameraViewer.Types
 {
@@ -21,12 +22,12 @@ namespace CameraViewer.Types
         /// <summary>
         /// The media player used by VLC to play the stream.
         /// </summary>
-        MediaPlayer VlcPlayer { get; }
+        public MediaPlayer VlcPlayer { get; }
 
         /// <summary>
         /// The view used to display the stream.
         /// </summary>
-        VideoView VidView { get; }
+        //VideoView VidView { get; }
 
         /// <summary>
         /// The Camera class constructor.
@@ -38,12 +39,12 @@ namespace CameraViewer.Types
             Name = name;
             ConnectionString = conString;
             VlcPlayer = new MediaPlayer(Globals.CameraLibVLC);
-            VidView = new VideoView()
-            {
-                MediaPlayer = VlcPlayer,
-                MinHeight = 200,
-                MinWidth = 200
-            };
+            //VidView = new VideoView()
+            //{
+            //    MediaPlayer = VlcPlayer,
+            //    MinHeight = 200,
+            //    MinWidth = 200
+            //};
         }
 
         /// <summary>
@@ -54,17 +55,17 @@ namespace CameraViewer.Types
         {
             Stop();
             VlcPlayer.Dispose();
-            VidView.Dispose();
+            //Application.Current.Dispatcher.Invoke(VidView.Dispose, System.Windows.Threading.DispatcherPriority.Normal);
         }
 
         /// <summary>
         /// Returns the view used to display the stream in the UI.
         /// </summary>
         /// <returns>A VideoView object.</returns>
-        public VideoView VideoView()
-        {
-            return VidView;
-        }
+        //public VideoView VideoView()
+        //{
+        //    return VidView;
+        //}
 
         /// <summary>
         /// Starts the stream.
