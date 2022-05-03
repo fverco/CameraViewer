@@ -5,6 +5,7 @@ namespace CameraViewer.Types
 {
     /// <summary>
     /// A class for setting up cameras to view in the window.
+    /// <para>Note: When done using a Camera object you must call the VlcPlayer's dispose method as well as the VidView's dispose method to avoid memory leaks.</para>
     /// </summary>
     internal class Camera
     {
@@ -20,13 +21,15 @@ namespace CameraViewer.Types
 
         /// <summary>
         /// The media player used by VLC to play the stream.
+        /// <para>Note: When done using this player you must call its dispose method.</para>
         /// </summary>
-        MediaPlayer VlcPlayer { get; }
+        public MediaPlayer VlcPlayer { get; }
 
         /// <summary>
         /// The view used to display the stream.
+        /// <para>Note: When done using this video view you must call its dispose method.</para>
         /// </summary>
-        VideoView VidView { get; }
+        public VideoView VidView { get; }
 
         /// <summary>
         /// The Camera class constructor.
@@ -44,26 +47,6 @@ namespace CameraViewer.Types
                 MinHeight = 200,
                 MinWidth = 200
             };
-        }
-
-        /// <summary>
-        /// The Camera class desctructor.
-        /// <para>This will stop the stream if it is playing and dispose of all LibVLC objects.</para>
-        /// </summary>
-        ~Camera()
-        {
-            Stop();
-            VlcPlayer.Dispose();
-            VidView.Dispose();
-        }
-
-        /// <summary>
-        /// Returns the view used to display the stream in the UI.
-        /// </summary>
-        /// <returns>A VideoView object.</returns>
-        public VideoView VideoView()
-        {
-            return VidView;
         }
 
         /// <summary>

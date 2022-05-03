@@ -10,6 +10,10 @@ namespace CameraViewer
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// A List of all the camera players and their connections.
+        /// <para>Note: The cameras in this list must have their Dispose() methods called when they are removed.</para>
+        /// </summary>
         List<Camera> _Cameras = new();
 
         /// <summary>
@@ -47,7 +51,9 @@ namespace CameraViewer
         {
             if (newCamera != null)
             {
-                CameraPanel.Children.Add(newCamera.VideoView());
+                // Add camera video view to the UI.
+                CameraPanel.Children.Add(newCamera.VidView);
+
                 newCamera.Play();
             }
         }
@@ -57,10 +63,18 @@ namespace CameraViewer
         /// </summary>
         internal void RefreshCameras()
         {
-            // Removes all cameras from the UI.
+            // Remove all video views from the UI.
             CameraPanel.Children.Clear();
 
-            // Removes all cameras from memory.
+            // Stop the camera streams and dispose their players and views.
+            foreach (var camera in _Cameras)
+            {
+                camera.Stop();
+                camera.VlcPlayer.Dispose();
+                camera.VidView.Dispose();
+            }
+
+            // Remove all cameras from memory.
             _Cameras.Clear();
 
             // Read the camera info from the XML file.
