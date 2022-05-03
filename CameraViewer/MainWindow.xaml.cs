@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using CameraViewer.Types;
-using LibVLCSharp.WPF;
 
 namespace CameraViewer
 {
@@ -16,12 +15,6 @@ namespace CameraViewer
         /// <para>Note: The cameras in this list must have their Dispose() methods called when they are removed.</para>
         /// </summary>
         List<Camera> _Cameras = new();
-
-        /// <summary>
-        /// A List of all the video views used to display the cameras.
-        /// <para>Note: The video views in this list must have their Dispose() methods called when they are removed.</para>
-        /// </summary>
-        List<VideoView> _VideoViews = new();
 
         /// <summary>
         /// Initialize the Main Window.
@@ -58,19 +51,8 @@ namespace CameraViewer
         {
             if (newCamera != null)
             {
-                // Create new video view.
-                var newVidView = new VideoView()
-                {
-                    MediaPlayer = newCamera.VlcPlayer,
-                    MinHeight = 200,
-                    MinWidth = 200
-                };
-
-                // Add to the video views list.
-                _VideoViews.Add(newVidView);
-
-                // Add to the UI.
-                CameraPanel.Children.Add(newVidView);
+                // Add camera video view to the UI.
+                CameraPanel.Children.Add(newCamera.VidView);
 
                 newCamera.Play();
             }
@@ -84,12 +66,13 @@ namespace CameraViewer
             // Remove all video views from the UI.
             CameraPanel.Children.Clear();
 
-            // Dispose all the video views from memory.
-            foreach (VideoView vidview in _VideoViews)
-                vidview.Dispose();
-
-            // Remove all the video views from the list.
-            _VideoViews.Clear();
+            // Stop the camera streams and dispose their players and views.
+            foreach (var camera in _Cameras)
+            {
+                camera.Stop();
+                camera.VlcPlayer.Dispose();
+                camera.VidView.Dispose();
+            }
 
             // Remove all cameras from memory.
             _Cameras.Clear();
