@@ -10,7 +10,8 @@
         ResizeMode="NoResize"
         Height="330" Width="500"
         MinHeight="330" MinWidth="500"
-        MaxHeight="330" MaxWidth="500">
+        MaxHeight="330" MaxWidth="500"
+        KeyDown="KeyPressEvent">
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
