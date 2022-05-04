@@ -47,14 +47,12 @@ namespace CameraViewer
 
         private void TestConnectionClicked(object sender, RoutedEventArgs e)
         {
-            // Check if the IP address and port number is provided.
-            if (IpTextBox.Address != null &&
-                IpTextBox.Address.Length > 6 &&
+            // Check if a valid IP address and port number is provided.
+            if (InputValidation.VerifyIPAddress(IpTextBox.Address) &&
                 PortTextBox.Text.Length > 0)
             {
                 var portNumberIsValid = Int32.TryParse(PortTextBox.Text, out int portNumber);
 
-                // Check if the port number is a valid number.
                 if (portNumberIsValid)
                 {
                     // Test the connection.
@@ -75,6 +73,8 @@ namespace CameraViewer
                 else
                     MessageBox.Show($"Please provide a valid port number.", "Invalid port number", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            else
+                MessageBox.Show("Please provide a valid IP address and port number before testing.", "Missing data", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         /// <summary>
@@ -104,8 +104,7 @@ namespace CameraViewer
         {
             if (NameTextBox.Text.Length > 0 &&
                 PassBox.Password.Length > 0 &&
-                IpTextBox.Address != null &&
-                IpTextBox.Address.Length > 6 &&
+                InputValidation.VerifyIPAddress(IpTextBox.Address) &&
                 PortTextBox.Text.Length > 0 &&
                 ParametersTextBox.Text.Length > 0)
             {
