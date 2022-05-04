@@ -139,7 +139,7 @@ namespace CameraViewer
                 }
             }
             else
-                MessageBox.Show("Please fill in all the fields before continuing.", "Missing data", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Please fill in all the fields and ensure that they are correct.", "Missing data", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }
