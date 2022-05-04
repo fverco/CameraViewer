@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows.Input;
+using System;
 
 namespace CameraViewer.Types
 {
@@ -31,6 +32,34 @@ namespace CameraViewer.Types
             {
                 e.Handled = true;
             }
+        }
+
+        /// <summary>
+        /// Checks if an IP address is valid.
+        /// </summary>
+        /// <param name="ipAddress">The provided IP address.</param>
+        /// <returns>True if the IP address is valid.</returns>
+        static public bool VerifyIPAddress(string ipAddress)
+        {
+            if (ipAddress != null)
+            {
+                var ipPartsArray = ipAddress.Split('.');
+
+                if (ipPartsArray.Length == 4)
+                {
+                    foreach (var ipPart in ipPartsArray)
+                    {
+                        var IsANumber = Int32.TryParse(ipPart, out int ipPartNum);
+
+                        if (!IsANumber || ipPartNum > 254 || ipPartNum < 0)
+                            return false;
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
