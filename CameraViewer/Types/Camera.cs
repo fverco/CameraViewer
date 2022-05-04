@@ -1,5 +1,7 @@
 ﻿using LibVLCSharp.Shared;
 using LibVLCSharp.WPF;
+using System.Windows;
+using System;
 
 namespace CameraViewer.Types
 {
@@ -52,9 +54,10 @@ namespace CameraViewer.Types
         /// <summary>
         /// Starts the stream.
         /// </summary>
-        public void Play()
+        /// <returns>True if the stream succeeds.</returns>
+        public bool Play()
         {
-            VlcPlayer.Play(new Media(Globals.CameraLibVLC, Crypto.Unprotect(ConnectionString), FromType.FromLocation));
+            return VlcPlayer.Play(new Media(Globals.CameraLibVLC, Crypto.Unprotect(ConnectionString), FromType.FromLocation));                
         }
 
         /// <summary>
