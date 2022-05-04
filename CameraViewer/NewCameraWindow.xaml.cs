@@ -45,6 +45,38 @@ namespace CameraViewer
             this.Close();
         }
 
+        private void TestConnectionClicked(object sender, RoutedEventArgs e)
+        {
+            // Check if the IP address and port number is provided.
+            if (IpTextBox.Address != null &&
+                IpTextBox.Address.Length > 6 &&
+                PortTextBox.Text.Length > 0)
+            {
+                var portNumberIsValid = Int32.TryParse(PortTextBox.Text, out int portNumber);
+
+                // Check if the port number is a valid number.
+                if (portNumberIsValid)
+                {
+                    // Test the connection.
+                    var (ipSuccess, portSuccess) = Network.TestConnection(IpTextBox.Address, portNumber);
+
+                    if (ipSuccess)
+                    {
+                        if (portSuccess)
+                        {
+                            MessageBox.Show("The connection was successful!", "Connection success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                        else
+                            MessageBox.Show($"The device's port {PortTextBox.Text} is not open.", "Port failure", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else
+                        MessageBox.Show("The connection failed. Please make sure the IP address and port is correct and that the device is currently powered on.", "Connection failure", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else
+                    MessageBox.Show($"Please provide a valid port number.", "Invalid port number", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         /// <summary>
         /// Uses all the provided connection information to add a new camera.
         /// </summary>
