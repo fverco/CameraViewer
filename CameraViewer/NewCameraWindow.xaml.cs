@@ -78,6 +78,26 @@ namespace CameraViewer
         }
 
         /// <summary>
+        /// Called whenever a character is entered in the port number field. This validates a character entered to make sure it is allowed as input.
+        /// </summary>
+        /// <param name="sender">The component that triggered the event.</param>
+        /// <param name="e">The arguments containing information about the character entered.</param>
+        private void NumberValidation(object sender, TextCompositionEventArgs e)
+        {
+            InputValidation.NumberValidation(sender, e);
+        }
+
+        /// <summary>
+        /// Called whenever a key is entered in the port number field. This will check if the space key is pressed and will ignore it as input.
+        /// </summary>
+        /// <param name="sender">The component that triggered the event.</param>
+        /// <param name="e">The arguments containing information about the key pressed.</param>
+        private void SpaceKeyPressedValidation(object sender, KeyEventArgs e)
+        {
+            InputValidation.SpaceKeyPressedValidation(sender, e);
+        }
+
+        /// <summary>
         /// Uses all the provided connection information to add a new camera.
         /// </summary>
         private void AddNewCamera()

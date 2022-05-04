@@ -35,7 +35,7 @@
         <cv:IPTextBox x:Name="IpTextBox" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Width="200" Margin="0,0,0,10"/>
 
         <Label Grid.Row="2" Grid.Column="0" Margin="0,0,0,10">Port:</Label>
-        <TextBox Name="PortTextBox" Grid.Row="2" Grid.Column="1" Text="554" HorizontalAlignment="Left" Width="40" Margin="0,0,0,10"/>
+        <TextBox Name="PortTextBox" Grid.Row="2" Grid.Column="1" Text="554" PreviewKeyDown="SpaceKeyPressedValidation" PreviewTextInput="NumberValidation" HorizontalAlignment="Left" Width="40" Margin="0,0,0,10"/>
 
         <Label Grid.Row="3" Grid.Column="0" Margin="0,0,0,10">Connection Parameters:</Label>
         <TextBox Name="ParametersTextBox" Grid.Row="3" Grid.Column="1" Text="/Streaming/Channels/101" Margin="0,0,0,10"/>
