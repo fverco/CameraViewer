@@ -38,10 +38,12 @@ namespace CameraViewer.Types
                     try
                     {
                         tcpClient.Connect(ipAddress, portNumber);
+                        tcpClient.Close();
                         return (ipSuccess: true, portSuccess: true);
                     }
                     catch (Exception)
                     {
+                        tcpClient.Close();
                         return (ipSuccess: true, portSuccess: false); ;
                     }
                 }
