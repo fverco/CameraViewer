@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
 using CameraViewer.Types;
+using CameraViewer.Controls;
 
 namespace CameraViewer
 {
@@ -11,10 +11,15 @@ namespace CameraViewer
     public partial class MainWindow : Window
     {
         /// <summary>
-        /// A List of all the camera players and their connections.
+        /// A list of all the camera players and their connections.
         /// <para>Note: The cameras in this list must have their Dispose() methods called when they are removed.</para>
         /// </summary>
         List<Camera> _Cameras = new();
+
+        /// <summary>
+        /// A list of all the camera views in the UI.
+        /// </summary>
+        List<CameraView> _CameraViews = new();
 
         /// <summary>
         /// Initialize the Main Window.
@@ -30,8 +35,6 @@ namespace CameraViewer
         /// </summary>
         void SetupCameras()
         {
-            CameraPanel.Orientation = Orientation.Horizontal;
-
             if (XmlHandler.CameraFileExists())
             {
                 // Read the camera info from the XML file.
@@ -51,8 +54,13 @@ namespace CameraViewer
         {
             if (newCamera != null)
             {
+                // Create a new camera view for the new camera.
+                var camView = new CameraView();
+                camView.VidView.MediaPlayer = newCamera.VlcPlayer;
+
                 // Add camera video view to the UI.
-                CameraPanel.Children.Add(newCamera.VidView);
+                CamGrid.AddCameraView(camView);
+                _CameraViews.Add(camView);
 
                 newCamera.Play();
             }
@@ -64,15 +72,23 @@ namespace CameraViewer
         internal void RefreshCameras()
         {
             // Remove all video views from the UI.
-            CameraPanel.Children.Clear();
+            CamGrid.ClearCameraViews();
 
-            // Stop the camera streams and dispose their players and views.
+            // Stop the camera streams and dispose their players.
             foreach (var camera in _Cameras)
             {
                 camera.Stop();
                 camera.VlcPlayer.Dispose();
-                camera.VidView.Dispose();
             }
+
+            // Dispose the camera views.
+            foreach (var view in _CameraViews)
+            {
+                view.VidView.Dispose();
+            }
+
+            // Remove all the camera views from memory.
+            _CameraViews.Clear();
 
             // Remove all cameras from memory.
             _Cameras.Clear();
