@@ -8,20 +8,10 @@ namespace CameraViewer.Controls
     /// </summary>
     public partial class CameraGrid : UserControl
     {
-        /// <summary>
-        /// The maximum amount of camera views allowed per row.
-        /// </summary>
-        private short _MaxRowSize = 2;
-
-        /// <summary>
-        /// The amount of camera views in the grid.
-        /// </summary>
-        private short _CameraViewCount = 0;
-
         public CameraGrid()
         {
             InitializeComponent();
-            CamGrid.ShowGridLines = true;
+            CamGrid.ShowGridLines = true;   // Add grid lines for debugging purposes.
         }
 
         /// <summary>
@@ -30,24 +20,45 @@ namespace CameraViewer.Controls
         /// <param name="camView"></param>
         public void AddCameraView(CameraView camView)
         {
+            // Add the camera view to the grid.
             CamGrid.Children.Add(camView);
 
-            // Create a column if there aren't enough columns.
-            if (_CameraViewCount < _MaxRowSize)
-                CamGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            // Check first if the amount spaces available are less than the amount of camera views.
+            if ((CamGrid.RowDefinitions.Count * CamGrid.ColumnDefinitions.Count) < CamGrid.Children.Count)
+            {
+                // If there aren't enough spaces then add an equal amount of columns and rows where needed.
+                if (CamGrid.ColumnDefinitions.Count <= CamGrid.RowDefinitions.Count)
+                    CamGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                else
+                    CamGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+            }
 
-            // Get the amount of available space in the last row.
-            short lastRowCamSpace = (short)(_CameraViewCount % _MaxRowSize);
+            RearangeCameraViews();
+        }
 
-            // If there isn't any space in the last row, create a new row.
-            if (lastRowCamSpace == 0)
-                CamGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        /// <summary>
+        /// This will rearange every camera view in a left-to-right order in the existing row and column definitions.
+        /// </summary>
+        private void RearangeCameraViews()
+        {
+            int row = 0;
+            int col = -1;
 
-            // Place the camera view in the last row, in the first available spot from the left.
-            camView.SetValue(Grid.RowProperty, CamGrid.RowDefinitions.Count - 1);
-            camView.SetValue(Grid.ColumnProperty, (int)lastRowCamSpace);
+            foreach (UIElement view in CamGrid.Children)
+            {
+                col++;
 
-            _CameraViewCount++;
+                if ((col + 1) > CamGrid.ColumnDefinitions.Count)
+                {
+                    col = 0;
+                    row++;
+                }
+                if ((row + 1) > CamGrid.RowDefinitions.Count)
+                    break;
+
+                view.SetValue(Grid.RowProperty, row);
+                view.SetValue(Grid.ColumnProperty, col);
+            }
         }
 
         /// <summary>
@@ -59,7 +70,6 @@ namespace CameraViewer.Controls
             CamGrid.Children.Clear();
             CamGrid.RowDefinitions.Clear();
             CamGrid.ColumnDefinitions.Clear();
-            _CameraViewCount = 0;
         }
     }
 }
