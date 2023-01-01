@@ -68,8 +68,10 @@ namespace CameraViewer.Controls
         public void ClearCameraViews()
         {
             CamGrid.Children.Clear();
-            CamGrid.RowDefinitions.Clear();
-            CamGrid.ColumnDefinitions.Clear();
+
+            // Don't use this. This causes the cameras to be added on top of eachother.
+            //CamGrid.RowDefinitions.Clear();
+            //CamGrid.ColumnDefinitions.Clear();
         }
     }
 }
