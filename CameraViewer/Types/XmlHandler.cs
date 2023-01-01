@@ -78,13 +78,20 @@ namespace CameraViewer.Types
         /// <returns>A list of Camera types.</returns>
         public static List<Camera> ReadAllCamerasFromFile()
         {
-            var xmlDoc = new XmlDocument();
-            xmlDoc.Load(_XmlCameraFileName);
             var cameras = new List<Camera>();
 
-            foreach (XmlNode xmlNode in xmlDoc.DocumentElement)
-                cameras.Add(new Camera(xmlNode.InnerText, xmlNode.Attributes["conn"].Value));
+            try
+            {
+                var xmlDoc = new XmlDocument();
+                xmlDoc.Load(_XmlCameraFileName);
 
+                foreach (XmlNode xmlNode in xmlDoc.DocumentElement)
+                    cameras.Add(new Camera(xmlNode.InnerText, xmlNode.Attributes["conn"].Value));
+            }
+            catch (IOException)
+            {
+                // No cameras added yet.
+            }
             return cameras;
         }
 
