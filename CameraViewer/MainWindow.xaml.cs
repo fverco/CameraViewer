@@ -93,12 +93,7 @@ namespace CameraViewer
             // Remove all cameras from memory.
             _Cameras.Clear();
 
-            // Read the camera info from the XML file.
-            _Cameras = XmlHandler.ReadAllCamerasFromFile();
-
-            // Add the cameras to the UI.
-            foreach (var cam in _Cameras)
-                AddCamera(cam);
+            SetupCameras();
         }
 
         /// <summary>
